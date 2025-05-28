@@ -8,8 +8,11 @@ import java.util.List;
 @Builder
 @Data
 public class Response {
-    List<TaskDTO> tasks;
-    TaskDTO task;
-    String status;
-    String message;
+    private List<TaskDTO> tasks;
+    private TaskDTO task;
+    private String status;
+    private String message;
+
+    private int totalPage;
+    private Long totalElement;
 }

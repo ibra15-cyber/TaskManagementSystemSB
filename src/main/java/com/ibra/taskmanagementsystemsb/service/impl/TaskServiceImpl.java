@@ -3,14 +3,23 @@ package com.ibra.taskmanagementsystemsb.service.impl;
 
 import com.ibra.taskmanagementsystemsb.dtos.TaskDTO;
 import com.ibra.taskmanagementsystemsb.entity.Task;
+import com.ibra.taskmanagementsystemsb.enums.TaskPriority;
+import com.ibra.taskmanagementsystemsb.enums.TaskStatus;
 import com.ibra.taskmanagementsystemsb.exceptions.NotFoundException;
 import com.ibra.taskmanagementsystemsb.mapper.EntityMapper;
 import com.ibra.taskmanagementsystemsb.repository.TaskRepository;
 import com.ibra.taskmanagementsystemsb.service.interf.TaskService;
+import com.ibra.taskmanagementsystemsb.specification.TaskSpecification;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,9 +62,9 @@ public class TaskServiceImpl implements TaskService {
     public TaskDTO updateTask(Long taskId, TaskDTO taskDTO) throws NotFoundException {
         System.out.println(taskDTO);
         Task taskToUpdate = taskRepository.findById(taskId).orElseThrow(()-> new NotFoundException("Task not found"));
-        log.debug(                "found tasks.............", taskToUpdate);
+        log.debug("found tasks.............", taskToUpdate);
         System.out.println(taskToUpdate);
-        System.out.println(taskDTO.getAssignee());
+
         if (taskDTO.getTitle() != null) taskToUpdate.setTitle(taskDTO.getTitle());
         if (taskDTO.getDescription() != null) taskToUpdate.setDescription(taskDTO.getDescription());
         if (taskDTO.getDueDate() != null) taskToUpdate.setDueDate(taskDTO.getDueDate());
@@ -75,7 +84,59 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDTO> searchTaskByName(Long userId) {
+    public List<TaskDTO> searchByTitle(String title, String description) {
+        List<Task> tasks = taskRepository.findTasksByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(title, description);
+        return tasks.stream()
+                .map(entityMapper::mapTaskToTaskDTO)
+                .toList();
+
+    }
+
+    @Override
+    public List<TaskDTO> searchByAssigneeAndPriority(String assignee, TaskPriority priority) {
         return List.of();
     }
+
+    @Override
+    public List<TaskDTO> dynamicFilter(String title, String description, String assignee, LocalDateTime createdAt, LocalDateTime dueDate, TaskPriority priority, TaskStatus status, Long pageSize, Long pageNumber, String sortBy){
+        log.debug("Received TaskFilterRequest: {}", title);
+        Pageable pageable = PageRequest.of(Math.toIntExact(pageNumber), Math.toIntExact(pageSize),
+                Sort.by(Sort.Direction.DESC, sortBy));
+
+        Specification<Task> spec = Specification.allOf();
+
+        if (title != null) {
+            spec = spec.and(TaskSpecification.hasTitle(title));
+        }
+        if (description != null) {
+            spec = spec.and(TaskSpecification.hasDescription(description));
+        }
+        if (createdAt != null) {
+            spec = spec.and(TaskSpecification.createdAt(createdAt));
+        }
+        if (dueDate!= null) {
+            spec = spec.and(TaskSpecification.dueBefore(dueDate));
+        }
+        if (status != null) {
+            spec = spec.and(TaskSpecification.hasStatus(status));
+        }
+        if (priority != null) {
+            spec = spec.and(TaskSpecification.hasPriority(priority));
+        }
+        if (assignee != null) {
+            spec = spec.and(TaskSpecification.hasAssignee(assignee));
+        }
+
+        log.debug("Executing dynamic filter with specification: {}", spec);
+        Page<Task> tasks = taskRepository.findAll(spec, pageable);
+        log.debug("Found {} tasks after dynamic filter.", tasks.getTotalElements());
+
+        tasks.forEach(task -> log.debug("Found Task: {}", task)); // Log each found task
+
+        return tasks.stream()
+                .map(entityMapper::mapTaskToTaskDTO)
+                .toList();
+    }
+
 }
+
