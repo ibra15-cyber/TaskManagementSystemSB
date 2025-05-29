@@ -27,7 +27,7 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<Response> getTasks() {
+    public ResponseEntity<Response> getAllTasks() {
          List<TaskDTO> taskDTOS = taskService.getAllTasks();
          Response response = Response.builder()
                  .tasks(taskDTOS)
@@ -36,7 +36,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Response> createTask(@RequestBody TaskDTO taskDTO) {
+    public ResponseEntity<Response> createATask(@RequestBody TaskDTO taskDTO) {
         TaskDTO createdTaskDTO = taskService.createTask(taskDTO);
         Response response = Response.builder()
                 .task(createdTaskDTO)
