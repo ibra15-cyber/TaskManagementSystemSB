@@ -2,10 +2,9 @@ package com.ibra.taskmanagementsystemsb.controller;
 
 import com.ibra.taskmanagementsystemsb.dtos.Response;
 import com.ibra.taskmanagementsystemsb.dtos.TaskDTO;
-import com.ibra.taskmanagementsystemsb.dtos.TaskFilterRequest;
 import com.ibra.taskmanagementsystemsb.enums.TaskPriority;
 import com.ibra.taskmanagementsystemsb.enums.TaskStatus;
-import com.ibra.taskmanagementsystemsb.exceptions.NotFoundException;
+import com.ibra.taskmanagementsystemsb.exceptions.ResourceNotFoundException;
 import com.ibra.taskmanagementsystemsb.service.interf.TaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -45,7 +44,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Response> getTaskById(@PathVariable("id") Long id) throws NotFoundException {
+    public ResponseEntity<Response> getTaskById(@PathVariable("id") Long id) throws ResourceNotFoundException {
         TaskDTO taskDTO = taskService.getTaskById(id);
         Response response = Response.builder()
                 .task(taskDTO)
@@ -54,7 +53,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Response> updateTask(@PathVariable("id") Long id, @RequestBody TaskDTO taskDTO) throws NotFoundException {
+    public ResponseEntity<Response> updateTask(@PathVariable("id") Long id, @RequestBody TaskDTO taskDTO) throws ResourceNotFoundException {
         TaskDTO updatedTask =  taskService.updateTask(id, taskDTO);
         Response response = Response.builder()
                 .status(String.valueOf(HttpStatus.NO_CONTENT))
@@ -64,7 +63,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Response> deleteTask(@PathVariable("id") Long id) throws NotFoundException {
+    public ResponseEntity<Response> deleteTask(@PathVariable("id") Long id) throws ResourceNotFoundException {
         taskService.deleteTask(id);
         Response response = Response.builder()
                 .status(String.valueOf(HttpStatus.NO_CONTENT))

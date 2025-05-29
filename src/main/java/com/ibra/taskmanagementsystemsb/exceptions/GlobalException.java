@@ -19,8 +19,8 @@ public class GlobalException {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Response> handleResourceNotFound(NotFoundException ex, WebRequest request){
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Response> handleResourceNotFound(ResourceNotFoundException ex, WebRequest request){
         Response response = Response.builder()
                 .message(ex.getMessage())
                 .status(String.valueOf(HttpStatus.NOT_FOUND.value()))

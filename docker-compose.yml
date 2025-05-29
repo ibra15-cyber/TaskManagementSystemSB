@@ -1,0 +1,36 @@
+services:
+  task-manager-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: task-manager:latest
+    container_name: taskmanager
+    env_file:
+      - .env.docker
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - server.port=${serverPort}
+      - spring.datasource.url=${databaseUrl}
+      - spring.datasource.username=${postgresUser}
+      - spring.datasource.password=${mysqlPassword}
+
+    ports:
+      - "${serverPort}:${serverPort}"
+
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    container_name: taskmanager_sb
+    ports:
+      - "5433:5433"
+    environment:
+      POSTGRES_PASSWORD: ${mysqlPassword}
+      POSTGRES_USER: ${postgresUser}
+      POSTGRES_DB: taskmanager_sb
+    volumes:
+      - task-manager:/var/lib/postgresql/data
+
+volumes:
+  task-manager:

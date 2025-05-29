@@ -5,7 +5,7 @@ import com.ibra.taskmanagementsystemsb.dtos.TaskDTO;
 import com.ibra.taskmanagementsystemsb.entity.Task;
 import com.ibra.taskmanagementsystemsb.enums.TaskPriority;
 import com.ibra.taskmanagementsystemsb.enums.TaskStatus;
-import com.ibra.taskmanagementsystemsb.exceptions.NotFoundException;
+import com.ibra.taskmanagementsystemsb.exceptions.ResourceNotFoundException;
 import com.ibra.taskmanagementsystemsb.mapper.EntityMapper;
 import com.ibra.taskmanagementsystemsb.repository.TaskRepository;
 import com.ibra.taskmanagementsystemsb.service.interf.TaskService;
@@ -46,8 +46,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskDTO getTaskById(Long taskId) throws NotFoundException {
-        Task task = taskRepository.findById(taskId).orElseThrow(()-> new NotFoundException("Task not found"));
+    public TaskDTO getTaskById(Long taskId) throws ResourceNotFoundException {
+        Task task = taskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found"));
         return entityMapper.mapTaskToTaskDTO(task);
     }
 
@@ -59,9 +59,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskDTO updateTask(Long taskId, TaskDTO taskDTO) throws NotFoundException {
+    public TaskDTO updateTask(Long taskId, TaskDTO taskDTO) throws ResourceNotFoundException {
         System.out.println(taskDTO);
-        Task taskToUpdate = taskRepository.findById(taskId).orElseThrow(()-> new NotFoundException("Task not found"));
+        Task taskToUpdate = taskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found"));
         log.debug("found tasks.............", taskToUpdate);
         System.out.println(taskToUpdate);
 
@@ -78,8 +78,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void deleteTask(Long taskId) throws NotFoundException {
-        Task task = taskRepository.findById(taskId).orElseThrow(()-> new NotFoundException("Task not found"));
+    public void deleteTask(Long taskId) throws ResourceNotFoundException {
+        Task task = taskRepository.findById(taskId).orElseThrow(()-> new ResourceNotFoundException("Task not found"));
         taskRepository.deleteById(task.getId());
     }
 
