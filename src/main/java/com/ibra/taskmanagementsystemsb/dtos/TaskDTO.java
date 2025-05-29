@@ -2,9 +2,7 @@ package com.ibra.taskmanagementsystemsb.dtos;
 
 import com.ibra.taskmanagementsystemsb.enums.TaskPriority;
 import com.ibra.taskmanagementsystemsb.enums.TaskStatus;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
