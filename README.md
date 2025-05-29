@@ -2,6 +2,9 @@
 
 A Spring Boot REST API for task CRUD operations with dynamic search capabilities using JPA Specifications.
 
+## FIND ATTACHED THE IN THE ROOT FOLDER THE ARCHITECTURE DIAGRAM in architecture-diagram.mermaid file
+## AND THE SPRING CONCEPT EXPLAINED IN THE spring-concepts-summary 
+## The link to the 
 ## Prerequisites
 
 - **Java 21** (required by the project toolchain)
