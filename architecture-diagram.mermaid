@@ -1,0 +1,96 @@
+graph TB
+    %% External Layer
+    Client[📱 Client Application<br/>Web/Mobile/Postman]
+    SwaggerUI[📚 Swagger UI<br/>API Documentation]
+    
+    %% Presentation Layer
+    subgraph "🌐 Presentation Layer"
+        TaskController[🎯 TaskController<br/>@RestController<br/>- CRUD endpoints<br/>- Dynamic search<br/>- Exception handling]
+        GlobalExceptionHandler[⚠️ GlobalExceptionHandler<br/>@ControllerAdvice<br/>- Centralized error handling]
+    end
+    
+    %% Business Layer
+    subgraph "💼 Business/Service Layer"
+        TaskService[⚙️ TaskService<br/>@Service<br/>- Business logic<br/>- Validation<br/>- Transaction management]
+    end
+    
+    %% Data Access Layer
+    subgraph "📊 Data Access Layer"
+        TaskRepository[🗃️ TaskRepository<br/>extends JpaRepository<br/>- CRUD operations<br/>- Custom queries]
+        TaskSpecification[🔍 TaskSpecification<br/>JPA Specifications<br/>- Dynamic query building<br/>- Search criteria]
+    end
+    
+    %% Data Layer
+    subgraph "💾 Data Layer"
+        TaskEntity[📋 Task Entity<br/>@Entity<br/>- JPA annotations<br/>- Database mapping]
+        PostgreSQL[(🐘 PostgreSQL<br/>Database)]
+    end
+    
+    %% Configuration & Infrastructure
+    subgraph "⚙️ Configuration Layer"
+        Application[🚀 Application.java<br/>@SpringBootApplication<br/>- Main entry point<br/>- Auto-configuration]
+        AppConfig[📝 Application Properties<br/>- Database config<br/>- JPA settings<br/>- Server config]
+        DotEnv[🔐 Environment Variables<br/>.env file<br/>- Database credentials]
+    end
+    
+    %% Spring Framework Infrastructure
+    subgraph "🌱 Spring Framework"
+        IoC[🏗️ IoC Container<br/>- Bean management<br/>- Dependency injection<br/>- Application context]
+        JPA[📊 Spring Data JPA<br/>- Repository abstraction<br/>- Query generation<br/>- Transaction management]
+        Web[🌐 Spring Web MVC<br/>- Request mapping<br/>- JSON serialization<br/>- HTTP handling]
+        OpenAPI[📖 SpringDoc OpenAPI<br/>- API documentation<br/>- Swagger integration]
+    end
+    
+    %% Request Flow - Main CRUD Operations
+    Client -->|HTTP Requests<br/>GET, POST, PUT, DELETE| TaskController
+    SwaggerUI -->|API Testing| TaskController
+    TaskController -->|Business Logic| TaskService
+    TaskService -->|Data Operations| TaskRepository
+    TaskRepository -->|JPA Operations| TaskEntity
+    TaskEntity -->|SQL Queries| PostgreSQL
+    
+    %% Dynamic Search Flow
+    Client -->|Search Parameters<br/>?title=...&status=...| TaskController
+    TaskController -->|Search Criteria| TaskService
+    TaskService -->|Specification Building| TaskSpecification
+    TaskSpecification -->|Dynamic Queries| TaskRepository
+    TaskRepository -->|Criteria API| PostgreSQL
+    
+    %% Configuration Dependencies
+    Application -->|Bootstraps| IoC
+    AppConfig -->|Configuration| IoC
+    DotEnv -->|Environment Setup| AppConfig
+    
+    %% Framework Integration
+    IoC -->|Manages| TaskController
+    IoC -->|Manages| TaskService
+    IoC -->|Manages| TaskRepository
+    JPA -->|Implements| TaskRepository
+    Web -->|Handles| TaskController
+    OpenAPI -->|Documents| TaskController
+    
+    %% Exception Flow
+    TaskService -->|Business Exceptions| GlobalExceptionHandler
+    TaskRepository -->|Data Exceptions| GlobalExceptionHandler
+    GlobalExceptionHandler -->|Error Response| Client
+    
+    %% Response Flow
+    PostgreSQL -->|Data Results| TaskRepository
+    TaskRepository -->|Entity Objects| TaskService
+    TaskService -->|Business Objects| TaskController
+    TaskController -->|JSON Response| Client
+    
+    %% Styling
+    classDef clientStyle fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef controllerStyle fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef serviceStyle fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef dataStyle fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef configStyle fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef frameworkStyle fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    
+    class Client,SwaggerUI clientStyle
+    class TaskController,GlobalExceptionHandler controllerStyle
+    class TaskService serviceStyle
+    class TaskRepository,TaskSpecification,TaskEntity,PostgreSQL dataStyle
+    class Application,AppConfig,DotEnv configStyle
+    class IoC,JPA,Web,OpenAPI frameworkStyle
