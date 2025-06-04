@@ -93,11 +93,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDTO> searchByAssigneeAndPriority(String assignee, TaskPriority priority) {
-        return List.of();
-    }
-
-    @Override
     public List<TaskDTO> dynamicFilter(String title, String description, String assignee, LocalDateTime createdAt, LocalDateTime dueDate, TaskPriority priority, TaskStatus status, Long pageSize, Long pageNumber, String sortBy){
         log.debug("Received TaskFilterRequest: {}", title);
         Pageable pageable = PageRequest.of(Math.toIntExact(pageNumber), Math.toIntExact(pageSize),
@@ -105,27 +100,13 @@ public class TaskServiceImpl implements TaskService {
 
         Specification<Task> spec = Specification.allOf();
 
-        if (title != null) {
-            spec = spec.and(TaskSpecification.hasTitle(title));
-        }
-        if (description != null) {
-            spec = spec.and(TaskSpecification.hasDescription(description));
-        }
-        if (createdAt != null) {
-            spec = spec.and(TaskSpecification.createdAt(createdAt));
-        }
-        if (dueDate!= null) {
-            spec = spec.and(TaskSpecification.dueBefore(dueDate));
-        }
-        if (status != null) {
-            spec = spec.and(TaskSpecification.hasStatus(status));
-        }
-        if (priority != null) {
-            spec = spec.and(TaskSpecification.hasPriority(priority));
-        }
-        if (assignee != null) {
-            spec = spec.and(TaskSpecification.hasAssignee(assignee));
-        }
+        spec = spec.and(TaskSpecification.hasTitle(title));
+        spec = spec.and(TaskSpecification.hasDescription(description));
+        spec = spec.and(TaskSpecification.createdAt(createdAt));
+        spec = spec.and(TaskSpecification.dueBefore(dueDate));
+        spec = spec.and(TaskSpecification.hasStatus(status));
+        spec = spec.and(TaskSpecification.hasPriority(priority));
+        spec = spec.and(TaskSpecification.hasAssignee(assignee));
 
         log.debug("Executing dynamic filter with specification: {}", spec);
         Page<Task> tasks = taskRepository.findAll(spec, pageable);

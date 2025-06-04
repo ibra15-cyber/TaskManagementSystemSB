@@ -7,12 +7,12 @@ services:
     container_name: taskmanager
     env_file:
       - .env.docker
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - server.port=${serverPort}
-      - spring.datasource.url=${databaseUrl}
-      - spring.datasource.username=${postgresUser}
-      - spring.datasource.password=${mysqlPassword}
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#      - server.port=${serverPort}
+#      - spring.datasource.url=${databaseUrl}
+#      - spring.datasource.username=${postgresUser}
+#      - spring.datasource.password=${mysqlPassword}
 
     ports:
       - "${serverPort}:${serverPort}"

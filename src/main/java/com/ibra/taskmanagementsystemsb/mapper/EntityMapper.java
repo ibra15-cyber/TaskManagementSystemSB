@@ -13,6 +13,7 @@ public class EntityMapper {
         taskDTO.setId(task.getId());
         taskDTO.setTitle(task.getTitle());
         taskDTO.setDescription(task.getDescription());
+        taskDTO.setCreatedAt(task.getCreatedAt());
         taskDTO.setDueDate(task.getDueDate());
         taskDTO.setPriority(task.getPriority());
         taskDTO.setStatus(task.getStatus());
@@ -25,6 +26,7 @@ public class EntityMapper {
         Task task = new Task();
         task.setTitle(taskDTO.getTitle());
         task.setDescription(taskDTO.getDescription());
+        task.setCreatedAt(taskDTO.getCreatedAt());
         task.setDueDate(taskDTO.getDueDate());
         task.setPriority(taskDTO.getPriority());
         task.setStatus(taskDTO.getStatus());

@@ -17,8 +17,6 @@ public interface TaskService {
     void deleteTask(Long taskId) throws ResourceNotFoundException;
 
     List<TaskDTO> searchByTitle(String title, String description);
-    List<TaskDTO> searchByAssigneeAndPriority(String assignee, TaskPriority priority);
 
-//    List<TaskDTO> dynamicFilter(TaskFilterRequest request);
     List<TaskDTO> dynamicFilter(String title, String description, String assignee, LocalDateTime createdAt, LocalDateTime dueDate, TaskPriority priority, TaskStatus status, Long pageSize, Long pageNumber, String sortBy);
 }
